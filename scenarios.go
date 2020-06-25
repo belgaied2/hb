@@ -80,8 +80,7 @@ func dlScenMarkdown(ctx *cli.Context) error {
 	var token = getToken(email, password)
 	var bearer = "Bearer " + token
 
-	// var baseURL = hb_url + "/a"
-
+	// Get the scenario content from API and put it in scenario-type object
 	scenContentBytes := getScenarioContentFromAPI(bearer, scenName)
 	var scenDetail scenario
 	marschallErr := json.Unmarshal(scenContentBytes, &scenDetail)
@@ -90,6 +89,7 @@ func dlScenMarkdown(ctx *cli.Context) error {
 		log.Fatal("Unable to read json response: ", marschallErr)
 	}
 
+	// If scenario has 1 or more steps, create a directory for the scenario and files for each step
 	if len(scenDetail.Steps) > 0 {
 		os.Mkdir(scenName, os.ModePerm)
 		os.Chdir(scenName)
@@ -98,17 +98,20 @@ func dlScenMarkdown(ctx *cli.Context) error {
 }
 
 func getToken(username string, password string) string {
-	form := url.Values{}
 
+	// Put username and password in a form object
+	form := url.Values{}
 	form.Add("email", username)
 	form.Add("password", password)
 
+	// HTTP Post to Authentication Endpoint
 	resp, err := http.PostForm(hb_url+"/auth/authenticate", form)
 
 	if err != nil {
 		log.Fatal("Error during authentication request :", err)
 	}
 
+	// Read response from Authentication Endpoint
 	var stringResp map[string]string
 	respBody, ioErr := ioutil.ReadAll(resp.Body)
 
@@ -116,6 +119,7 @@ func getToken(username string, password string) string {
 		log.Fatal("Error reading the response's Body during authentication", ioErr)
 	}
 
+	// Result the resulting Token as a string
 	marshallErr := json.Unmarshal(respBody, &stringResp)
 
 	if marshallErr != nil {
