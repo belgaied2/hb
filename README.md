@@ -13,6 +13,9 @@ where:
 * `region`: the HobbyFarm's region in the URL: https://admin.na2.hobbyfarm.io/
 * `scenario`: is the name of the scenario to download
 
+At the moment this dl command will create a folder with the scenario name and put all markdown steps inside.
+
+
 To get inline help: 
 ```
 hb help
