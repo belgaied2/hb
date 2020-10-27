@@ -20,14 +20,14 @@ type step struct {
 	Content string
 }
 type scenario struct {
-	Id                 string
-	Name               string
-	Description        string
-	Steps              []step
-	Keepalive_duration string
-	Virtualmachines    []map[string]string
-	Pause_duration     string
-	Pauseable          bool
+	Id                string
+	Name              string
+	Description       string
+	Steps             []step
+	KeepaliveDuration string
+	Virtualmachines   []map[string]string
+	PauseDuration     string
+	Pauseable         bool
 }
 
 type simplifiedScenario struct {
@@ -35,7 +35,7 @@ type simplifiedScenario struct {
 	Name string
 }
 
-var hb_url string
+var hbURL string
 
 func dlCommand() *cli.Command {
 
@@ -76,7 +76,7 @@ func dlScenMarkdown(ctx *cli.Context) error {
 	scenName := ctx.String("scenario")
 
 	// intermediate variables
-	hb_url = "https://api." + region + ".hobbyfarm.io"
+	hbURL = "https://api." + region + ".hobbyfarm.io"
 	var token = getToken(email, password)
 	var bearer = "Bearer " + token
 
@@ -105,7 +105,7 @@ func getToken(username string, password string) string {
 	form.Add("password", password)
 
 	// HTTP Post to Authentication Endpoint
-	resp, err := http.PostForm(hb_url+"/auth/authenticate", form)
+	resp, err := http.PostForm(hbURL+"/auth/authenticate", form)
 
 	if err != nil {
 		log.Fatal("Error during authentication request :", err)
@@ -167,12 +167,16 @@ func getHFContentFromURL(url string, bearer string) []byte {
 	req, err := http.NewRequest("GET", url, nil)
 	req.Header.Add("Authorization", bearer)
 	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err2 := client.Do(req)
 
 	// Check if response is not error
 	if err != nil {
 		log.Fatal("The HTTP request failed with error:", err)
 
+	}
+	// Check if response is not error2
+	if err2 != nil {
+		log.Fatal("The HTTP request failed with error:", err2)
 	}
 
 	// Read the response
@@ -198,7 +202,7 @@ func getHFContentFromURL(url string, bearer string) []byte {
 func getScenarioContentFromAPI(bearer string, scenName string) []byte {
 
 	// Get List of scenarios from API
-	scenListData := getHFContentFromURL(hb_url+"/a/scenario/list", bearer)
+	scenListData := getHFContentFromURL(hbURL+"/a/scenario/list", bearer)
 
 	// Unmarshal content to object simplifiedScenario
 	scenarioData := []simplifiedScenario{}
@@ -210,7 +214,7 @@ func getScenarioContentFromAPI(bearer string, scenName string) []byte {
 		log.Fatal(err2)
 	}
 
-	scenLink := hb_url + "/a/scenario/" + getScenarioIdFromName(scenarioData, scenName)
+	scenLink := hbURL + "/a/scenario/" + getScenarioIdFromName(scenarioData, scenName)
 	fmt.Println("Link to access scenario data is: " + scenLink)
 	scenData := getHFContentFromURL(scenLink, bearer)
 
