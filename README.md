@@ -1,3 +1,5 @@
+[![Go Report Card](https://goreportcard.com/badge/github.com/belgaied2/hb)](https://goreportcard.com/report/github.com/belgaied2/hb)
+
 # HB a command line tool for HobbyFarm Administrators
 HobbyFarm is a Learning Management Platform used by Rancher Labs to provide Hands-On Training and Workshop. More on HobbyFarm [here](https://github.com/hobbyfarm).
 HB is a CLI tool designed to help HobbyFarm Administrators interact with HobbyFarm.
